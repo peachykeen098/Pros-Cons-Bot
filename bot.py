@@ -199,11 +199,16 @@ async def handle_command(
     if message.message_thread_id != PROS_CONS_TOPIC_ID:
         return
 
-    # Determine the target
-    if message.reply_to_message:
-        target = message.reply_to_message.from_user
-    else:
-        target = update.effective_user
+    # Always target the person using the command
+    target = update.effective_user
+
+    if not target or target.is_bot:
+        await message.reply_text(
+            "Pick an actual human, you menace."
+        )
+        return
+
+    name = target.first_name or "Troublemaker"
 
     if not target or target.is_bot:
         await message.reply_text(
